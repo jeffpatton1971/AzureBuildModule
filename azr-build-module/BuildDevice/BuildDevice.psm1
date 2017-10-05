@@ -178,6 +178,62 @@ function New-TrafficManager
 		throw $_;
 	}
 }
+
+function New-StorageAccount
+{
+	param
+	(
+		[object]$StorageAccountData,
+		[object]$SubscriptionData
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($StorageAccount in $StorageAccountData)
+		{
+			if ($StorageAccount.Name -ne $null)
+			{
+				if (Get-AzureRmStorageAccount -Name $StorageAccount.name -ResourceGroupName $StorageAccount.ResourceGroupName -ErrorAction SilentlyContinue)
+				{
+					Write-Host "Storage Account: $($StorageAccount.name) in $($StorageAccount.ResourceGroupName) already exists" -ForegroundColor Yellow
+				}
+				else
+				{
+					if (Get-AzureRmStorageAccountNameAvailability -Name $StorageAccount.name)
+					{
+						Write-Host "Creating Storage Account: $($StorageAccount.name) in $($StorageAccount.ResourceGroupName)" -ForegroundColor Green
+						$Tag = @{ 
+							BuildBy=$SubscriptionData.'Build By';
+							BuildDate=$SubscriptionData.'Build Date';
+							Ticket=$SubscriptionData.Ticket;
+							Environment=$StorageAccount.Environment}
+						$status = New-AzureRmStorageAccount -ResourceGroupName $StorageAccount.ResourceGroupName -Name $StorageAccount.name -SkuName $StorageAccount.SkuName -Location $StorageAccount.Location `
+								-Kind $StorageAccount.kind -AccessTier $StorageAccount.AccessTier -EnableEncryptionService $StorageAccount.EnableEncryptionService -Tag $Tag
+						if($status.ProvisioningState -eq 'Succeeded')
+						{
+							Write-Host "Success: Creating Storage Account: $($StorageAccount.name) in $($StorageAccount.ResourceGroupName)" -ForegroundColor Green
+						}
+						else
+						{
+							throw "Warning: Creating Storage Account: $($StorageAccount.name) in $($StorageAccount.ResourceGroupName) is not in a Succeeded state, please validate"
+						}
+					}
+					else
+					{
+						throw "Error: Creating Storage Account: $($StorageAccount.name) is already in use"
+					}
+				}
+			}
+		}
+	}
+	catch
+	{
+		throw $_;
+	}
+}
+
 function ConvertTo-Hashtable
 {
 	param
