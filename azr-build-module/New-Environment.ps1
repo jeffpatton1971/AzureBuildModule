@@ -37,6 +37,7 @@ foreach ($sheet in $SheetArray)
 		'WebApps'
 		{
 			$WebAppData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+			New-WebApp -WebAppData $WebAppData -SubscriptionData $SubscriptionData;
 		}
 		'TrafficManager'
 		{
