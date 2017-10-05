@@ -65,7 +65,7 @@ function New-OmsWorkspace
 				$Template = $OmsWorkspace.Template
 				$SAS = $OmsWorkspace.SAS
 
-				$TemplateParameterObject = ConvertTo-Hashtable -PsObject $OmsWorkspaceData -Exclusionlist @('OMSRSG','Template','SAS');
+				$TemplateParameterObject = ConvertTo-Hashtable -PsObject $OmsWorkspace -Exclusionlist @('OMSRSG','Template','SAS');
 				$status = New-AzureRmResourceGroupDeployment -Name $SubscriptionData.'Deployment Name' -ResourceGroupName $ResourceGroupName `
 					-Mode Incremental `
 					-TemplateParameterObject $TemplateParameterObject `
