@@ -6,6 +6,7 @@ param
 $SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks','OMSWOrkspaces','WebApps','TrafficManager','StorageAccounts')
 
 Import-Module .\BuildSheet\BuildSheet.psd1;
+Import-Module .\BuildDevice\BuildDevice.psd1;
 
 $SubscriptionData = Get-BuildSheetData -Path $Path -Worksheet 'Subscriptions';
 
@@ -22,6 +23,7 @@ foreach ($sheet in $SheetArray)
 		'ResourceGroups'
 		{
 			$ResourceGroupData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+			New-ResourceGroup -ResourceGroupData $ResourceGroupData -SubscriptionData $SubscriptionData;
 		}
 		'VirtualNetworks'
 		{
