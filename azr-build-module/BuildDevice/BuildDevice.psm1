@@ -49,7 +49,8 @@ function New-OmsWorkspace
 {
 	param
 	(
-		[object]$OmsWorkspaceData
+		[object]$OmsWorkspaceData,
+		[object]$SubscriptionData
 	)
 	try
 	{
@@ -61,43 +62,24 @@ function New-OmsWorkspace
 			if($OmsWorkspace.OMSworkspaceName -ne $null)
 			{
 				$ResourceGroupName = $OmsWorkspace.OMSRSG
-				$template = $OmsWorkspace.Template
+				$Template = $OmsWorkspace.Template
 				$SAS = $OmsWorkspace.SAS
 
-			}
-		}
-		# Create OMS Workspace
-		foreach($OMS in $OMSHash){
-			if($OMS.OMSworkspaceName -ne $null){
-				$ResourceGroupName = $OMS.OMSRSG
-				$template = $OMS.Template
-				$SAS = $OMS.SAS
-				$OMS.Remove('OMSRSG')
-				$OMS.Remove('Template')
-				$OMS.Remove('SAS')
-				try{
-					Write-Host "Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Green
-					$status = New-AzureRmResourceGroupDeployment -Name $SubHash.DeploymentName -ResourceGroupName $ResourceGroupName `
-												   -Mode Incremental `
-												   -TemplateParameterObject $OMS `
-												   -TemplateFile ("$template" + "$SAS") `
-												   -Force
-					if($status.ProvisioningState -eq 'Succeeded'){
-						Write-Host "Success: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Green
-					}
-					else{
-						  Write-Host "Warning: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName is not in a Succeeded state, please validate" -ForegroundColor Yellow
-						  break
-					}
+				$TemplateParameterObject = ConvertTo-Hashtable -PsObject $OmsWorkspaceData -Exclusionlist @('OMSRSG','Template','SAS');
+				$status = New-AzureRmResourceGroupDeployment -Name $SubscriptionData.'Deployment Name' -ResourceGroupName $ResourceGroupName `
+					-Mode Incremental `
+					-TemplateParameterObject $TemplateParameterObject `
+					-TemplateFile ("$template" + "$SAS") `
+					-Force;
+				if($status.ProvisioningState -eq 'Succeeded')
+				{
+					Write-Host "Success: Creating OMS Workspace: $($OmsWorkspaceData.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Green
 				}
-				catch{
-					Write-Host "Error: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Red
-					break
-
+				else
+				{
+					throw "Warning: Creating OMS Workspace: $($OmsWorkspaceData.OMSworkspaceName) in $ResourceGroupName is not in a Succeeded state, please validate"
 				}
-
 			}
-
 		}
 	}
 	catch
