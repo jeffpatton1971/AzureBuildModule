@@ -44,3 +44,95 @@ function New-ResourceGroup
 		throw $_;
 	}
 }
+
+function New-OmsWorkspace
+{
+	param
+	(
+		[object]$OmsWorkspaceData
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($OmsWorkspace in $OmsWorkspaceData)
+		{
+			if($OmsWorkspace.OMSworkspaceName -ne $null)
+			{
+				$ResourceGroupName = $OmsWorkspace.OMSRSG
+				$template = $OmsWorkspace.Template
+				$SAS = $OmsWorkspace.SAS
+
+			}
+		}
+		# Create OMS Workspace
+		foreach($OMS in $OMSHash){
+			if($OMS.OMSworkspaceName -ne $null){
+				$ResourceGroupName = $OMS.OMSRSG
+				$template = $OMS.Template
+				$SAS = $OMS.SAS
+				$OMS.Remove('OMSRSG')
+				$OMS.Remove('Template')
+				$OMS.Remove('SAS')
+				try{
+					Write-Host "Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Green
+					$status = New-AzureRmResourceGroupDeployment -Name $SubHash.DeploymentName -ResourceGroupName $ResourceGroupName `
+												   -Mode Incremental `
+												   -TemplateParameterObject $OMS `
+												   -TemplateFile ("$template" + "$SAS") `
+												   -Force
+					if($status.ProvisioningState -eq 'Succeeded'){
+						Write-Host "Success: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Green
+					}
+					else{
+						  Write-Host "Warning: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName is not in a Succeeded state, please validate" -ForegroundColor Yellow
+						  break
+					}
+				}
+				catch{
+					Write-Host "Error: Creating OMS Workspace: $($OMS.OMSworkspaceName) in $ResourceGroupName" -ForegroundColor Red
+					break
+
+				}
+
+			}
+
+		}
+	}
+	catch
+	{
+		throw $_;
+	}
+}
+
+
+function ConvertTo-Hashtable
+{
+	param
+	(
+		[object]$PsObject,
+		[string[]]$Exclusionlist
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		$HashTable = New-Object hashtable;
+		$Keys = $PsObject |Get-Member -MemberType NoteProperty |Select-Object -Property Name;
+
+		foreach ($Key in $Keys)
+		{
+			if ($Key.Name -notin $Exclusionlist)
+			{
+				$HashTable.Add($Key.Name,$PsObject.($Key.Name));
+			}
+		}
+		return $HashTable;
+	}
+	catch
+	{
+		throw $_;
+	}
+}
