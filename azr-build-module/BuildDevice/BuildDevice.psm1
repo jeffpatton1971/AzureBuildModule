@@ -131,6 +131,53 @@ function New-WebApp
 	}
 }
 
+function New-TrafficManager
+{
+	param
+	(
+		[object]$TrafficManagerData,
+		[object]$SubscriptionData
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($TrafficManager in $TrafficManagerData)
+		{
+			if ($TrafficManager.Name -ne $null)
+			{
+				if(Get-AzureRmTrafficManagerProfile -Name $TrafficManager.name -ResourceGroupName $TrafficManager.ResourceGroup -ErrorAction SilentlyContinue)
+				{
+					Write-Host "Traffic Manager Profile: $($TrafficManager.name) in $($TrafficManager.ResourceGroup) already exists" -ForegroundColor Yellow
+				}
+				else
+				{
+					Write-Host "Creating Traffic Manager: $($TrafficManager.name) in $($TrafficManager.ResourceGroup)" -ForegroundColor Green
+					$Tag = @{ 
+						BuildBy=$SubscriptionData.'Build By';
+						BuildDate=$SubscriptionData.'Build Date';
+						Ticket=$SubscriptionData.Ticket;
+						Environment=$TrafficManager.Environment}
+					$status = New-AzureRmTrafficManagerProfile -Name $TrafficManager.name -ResourceGroupName $TrafficManager.ResourceGroup -TrafficRoutingMethod $TrafficManager.trafficRoutingMethod -RelativeDnsName $TrafficManager.relativeName `
+							-Ttl $TrafficManager.ttl -MonitorProtocol $TrafficManager.MonitorProtocol -MonitorPort $TrafficManager.MonitorPort -MonitorPath $TrafficManager.MonitorPath -Tag $Tag;
+					if($status.ProfileStatus -eq 'Enabled')
+					{
+						Write-Host "Success: Creating Traffic Manager: $($TrafficManager.name) in $($TrafficManager.ResourceGroup)" -ForegroundColor Green
+					}
+					else
+					{
+						throw "Warning: Creating Traffic Manager: $($TrafficManager.name) in $($TrafficManager.ResourceGroup) is not in a Succeeded state, please validate"
+					}
+				}
+			}
+		}
+	}
+	catch
+	{
+		throw $_;
+	}
+}
 function ConvertTo-Hashtable
 {
 	param
