@@ -11,6 +11,7 @@ $BSFile = 'C:\Users\Jeremy Whiting\OneDrive - Rackspace Inc\azure\Customer Build
 
 $SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks','OMSWOrkspaces','WebApps','TrafficManager','StorageAccounts')
 
+
 foreach($sheetName in $SheetArray){
     $objExcel = New-Object -ComObject Excel.Application
     $workbook = $objExcel.Workbooks.Open($BSFile) 
