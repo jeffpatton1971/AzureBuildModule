@@ -33,6 +33,7 @@
     <Compile Include="azr-build-module.psd1" />
     <Compile Include="azr-build-module.psm1" />
     <Compile Include="azr-build-module.tests.ps1" />
+    <Compile Include="New-Environment.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

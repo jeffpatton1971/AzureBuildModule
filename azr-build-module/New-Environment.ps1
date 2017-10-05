@@ -7,14 +7,14 @@ $SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks
 
 Import-Module .\BuildSheet\BuildSheet.psd1;
 
+$SubscriptionData = Get-BuildSheetData -Path $Path -Worksheet 'Subscriptions';
+
+Login-AzureRmAccount -Credential $Credential -SubscriptionId $SubscriptionData.'Subscription ID' -TenantId $SubscriptionData.'Tenant ID'
+
 foreach ($sheet in $SheetArray)
 {
 	switch ($Sheet)
 	{
-		'Subscriptions'
-		{
-			$SubscriptionData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
-		}
 		'Environments'
 		{
 			$EnvironmentData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
