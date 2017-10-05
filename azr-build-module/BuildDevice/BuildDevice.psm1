@@ -88,6 +88,48 @@ function New-OmsWorkspace
 	}
 }
 
+function New-WebApp
+{
+	param
+	(
+		[object]$WebAppData,
+		[object]$SubscriptionData
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($WebApp in $WebAppData)
+		{
+			if($WebApp.webAppNames -ne $null)
+			{
+				$ResourceGroupName = $WebApp.WebAppRSG
+				$Template = $WebApp.Template
+				$SAS = $WebApp.SAS
+
+				$TemplateParameterObject = ConvertTo-Hashtable -PsObject $WebApp -Exclusionlist @('WebAppRSG','Template','SAS');
+				$status = New-AzureRmResourceGroupDeployment -Name $SubscriptionData.'Deployment Name' -ResourceGroupName $ResourceGroupName `
+					-Mode Incremental `
+					-TemplateParameterObject $TemplateParameterObject `
+					-TemplateFile ("$template" + "$SAS") `
+					-Force;
+				if($status.ProvisioningState -eq 'Succeeded')
+				{
+					Write-Host "Success: Creating Web APP: $($WebApp.webAppNames) in $ResourceGroupName" -ForegroundColor Green
+				}
+				else
+				{
+					throw "Warning: Creating Web APP: $($WebApp.webAppNames) in $ResourceGroupName is not in a Succeeded state, please validate"
+				}
+			}
+		}
+	}
+	catch
+	{
+		throw $_;
+	}
+}
 
 function ConvertTo-Hashtable
 {

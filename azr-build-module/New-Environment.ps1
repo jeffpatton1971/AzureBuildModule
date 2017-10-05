@@ -32,6 +32,7 @@ foreach ($sheet in $SheetArray)
 		'OMSWorkspaces'
 		{
 			$OmsWorkspaceData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+			New-OmsWorkspace -OmsWorkspaceData $ResourceGroupData -SubscriptionData $SubscriptionData;
 		}
 		'WebApps'
 		{
