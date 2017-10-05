@@ -47,6 +47,7 @@ foreach ($sheet in $SheetArray)
 		'StorageAccounts'
 		{
 			$StorageAccountData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+			New-StorageAccount -StorageAccountData $StorageAccountData -SubscriptionData $SubscriptionData;
 		}
 	}
 }
