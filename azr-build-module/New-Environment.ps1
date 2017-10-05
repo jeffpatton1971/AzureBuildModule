@@ -42,6 +42,7 @@ foreach ($sheet in $SheetArray)
 		'TrafficManager'
 		{
 			$TrafficManagerData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+			New-TrafficManager -TrafficManagerData $TrafficManagerData -SubscriptionData $SubscriptionData;
 		}
 		'StorageAccounts'
 		{
