@@ -2,8 +2,8 @@
 Get-Variable -Exclude PWD,*Preference | Remove-Variable -EA 0
 ####################################################
 
-$password = '3nuTTXsvYFD2gkJW' | ConvertTo-SecureString -AsPlainText -Force
-$username = "rackspace@NETORGFT850685.onmicrosoft.com"
+$password = "" | ConvertTo-SecureString -AsPlainText -Force
+$username = ""
 $credential = New-Object System.Management.Automation.PSCredential($username,$password)
 
 #Build Sheet location
