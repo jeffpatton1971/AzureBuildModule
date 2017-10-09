@@ -3,7 +3,7 @@ param
 	[string]$Path,
 	[System.Management.Automation.PSCredential]$Credential
 )
-$SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks','OMSWOrkspaces','WebApps','TrafficManager','StorageAccounts')
+$SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks','OMSWorkspaces','RecoveryServicesVault','ActiveDirectory','VirtualGateway','VPNConnections','NSGs','VirtualMachines','SQLAlwaysON','AppGateway','WebApps','TrafficManager','StorageAccounts','Lists')
 
 Import-Module .\BuildSheet\BuildSheet.psd1;
 Import-Module .\BuildDevice\BuildDevice.psd1;
@@ -16,6 +16,30 @@ foreach ($sheet in $SheetArray)
 {
 	switch ($Sheet)
 	{
+		'RecoveryServicesVault'
+		{
+
+		}
+		'VirtualGateway'
+		{
+
+		}
+		'ActiveDirectory'
+		{
+
+		}
+		'VPNConnections'
+		{
+
+		}
+		'NSGs'
+		{
+
+		}
+		'VirtualMachines'
+		{
+
+		}
 		'Environments'
 		{
 			$EnvironmentData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;

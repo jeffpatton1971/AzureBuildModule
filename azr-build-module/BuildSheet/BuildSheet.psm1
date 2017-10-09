@@ -43,7 +43,7 @@ Function Get-BuildSheetData
 		[Parameter(Mandatory=$True,Position=1)]
 		[string]$Path,
 		[Parameter(Mandatory=$True,Position=2)]
-		[ValidateSet('ActiveDirectory','Environments','Lists','NSGs','OMSWorkspaces','RecoveryServicesVault','ResourceGroups','StorageAccounts','Subscriptions','TrafficManager','VirtualGateway','VirtualMachines','VirtualNetworks','VPNConnections','WebApps')]
+		[ValidateSet('ActiveDirectory','AppGateway','Environments','Lists','NSGs','OMSWorkspaces','RecoveryServicesVault','ResourceGroups','SQLAlwaysON','StorageAccounts','Subscriptions','TrafficManager','VirtualGateway','VirtualMachines','VirtualNetworks','VPNConnections','WebApps')]
 		[string]$Worksheet
 	)
 	try
