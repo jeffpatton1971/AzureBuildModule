@@ -85,3 +85,17 @@ RELATED LINKS
     https://msdn.microsoft.com/en-us/library/system.data.oledb.oledbcommand(v=vs.110).aspx
     https://msdn.microsoft.com/en-us/library/system.data.oledb.oledbdatareader(v=vs.110).aspx
 ```    
+# Troubshooting
+
+If you see the message below you will need to download the ACE OLDB driver
+
+https://www.microsoft.com/en-us/download/details.aspx?id=13255
+
+```
+Exception calling "Open" with "0" argument(s): "The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine."
+At C:\Rackspace\azr-build-module\azr-build-module\BuildSheet\BuildSheet.psm1:65 char:3
++         $OleDbConnection.Open();
++         ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+    + FullyQualifiedErrorId : InvalidOperationException
+```
