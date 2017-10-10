@@ -234,6 +234,62 @@ function New-StorageAccount
 	}
 }
 
+function New-VirtualNetwork
+{
+	param
+	(
+		[object]$VirtualNetworkData,
+		[object]$SubscriptionData
+	)
+	try 
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($Vnet in $VirtualNetworkData)
+		{
+			if ($Vnet.Name -ne $null)
+			{
+				$ResourceGroupName = $Vnet.ResourceGroupName;
+				$VNETDNS += @{Name=$VNET.Name;vnetRSG=$VNET.ResourceGroupName;PrimaryDNS=$VNET.PrimaryDNS;SecondaryDNS=$VNET.SecondaryDNS}
+				$Template = $Vnet.Template
+				$SAS = $Vnet.SAS
+				$Size = $Vnet.VNETSize
+				
+				switch ($Size)
+				{
+					'Small'
+					{
+						$Vnet = ConvertTo-Hashtable -PsObject $Vnet -Exclusionlist 'PrimaryDNS','SecondaryDNS','ResourceGroupName','Template','SAS','vnetSize','environmentB','subnetDMZCIDRB','subnetAPPCIDRB','subnetINSCIDRB','subnetADCIDRB','subnetAGWCIDRB','environmentC','subnetDMZCIDRC','subnetAPPCIDRC','subnetINSCIDRC','subnetADCIDRC','subnetAGWCIDRC'
+					}
+					'Medium'
+					{
+							$Vnet = ConvertTo-Hashtable -PsObject $Vnet -Exclusionlist 'PrimaryDNS','SecondaryDNS','ResourceGroupName','Template','SAS','vnetSize','environmentC','subnetDMZCIDRC','subnetAPPCIDRC','subnetINSCIDRC','subnetADCIDRC','subnetAGWCIDRC'
+					}
+				}
+				
+				Write-Host "Creating Virtual Network: $($VNET.Item('Name')) in $ResourceGroupName" -ForegroundColor Green
+				$status = New-AzureRmResourceGroupDeployment -Name ($Subscription.'Deployment Name' + "-VNET") -ResourceGroupName $ResourceGroupName `
+						-Mode Incremental `
+						-TemplateParameterObject $VNET `
+						-TemplateFile ("$template" + "$SAS") `
+						-Force
+				if ($status.ProvisioningState -eq 'Succeeded')
+				{
+					Write-Host "Success: Creating Virtual Network: $($VNET.Item('Name')) in $ResourceGroupName" -ForegroundColor Green
+				}
+				else 
+				{
+					throw "Warning: Creating Virtual Network: $($VNET.Item('Name')) in $($ResourceGroupName) is not in a Succeeded state, please validate"
+				}
+			}
+		}
+	}
+	catch 
+	{
+		throw $_;
+	}
+}
 function ConvertTo-Hashtable
 {
 	param
