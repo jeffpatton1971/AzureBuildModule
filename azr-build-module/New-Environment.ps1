@@ -80,6 +80,7 @@ try
 			'VirtualNetworks'
 			{
 				$VirtualNetworkData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+				New-VirtualNetwork -VirtualNetworkData $VirtualNetworkData -SubscriptionData $SubscriptionData;
 			}
 			'OMSWorkspaces'
 			{
