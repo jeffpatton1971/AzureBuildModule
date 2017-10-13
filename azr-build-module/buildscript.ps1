@@ -447,7 +447,7 @@
                                     $rowVMassetLocation,$colVMassetLocation = 1,33
                                     $rowVMTemplate,$colVMTemplate = 1,34
                                     $rowVMsasToken,$colVMsasToken = 1,35
-                                    $rowVMHub,$colVMHub = 1,36
+                                   # $rowVMHub,$colVMHub = 1,36
 
                                     $VMHash = @(@{})
 
@@ -490,7 +490,7 @@
                                                                 assetLocation = $sheet.Cells.Item($rowVMassetLocation+$i,$colVMassetLocation).text; `
                                                                 Template = $sheet.Cells.Item($rowVMTemplate+$i,$colVMTemplate).text; `
                                                                 sasToken = $sheet.Cells.Item($rowVMsasToken+$i,$colVMsasToken).text; `
-                                                                HubLicense = $sheet.Cells.Item($rowVMHub+$i,$colVMHub).text; `
+                                                               # HubLicense = $sheet.Cells.Item($rowVMHub+$i,$colVMHub).text; `
                                                                 
                                                         }
                                                     

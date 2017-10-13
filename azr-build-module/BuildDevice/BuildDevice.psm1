@@ -290,6 +290,72 @@ function New-VirtualNetwork
 		throw $_;
 	}
 }
+
+function New-VirtualMachine
+{
+	param
+	(
+		[object]$VirtualMachineData,
+		[object]$OmsWorkspaceData,
+		[object]$SubscriptionData
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		foreach ($VirtualMachine in $VirtualMachineData)
+		{
+			$OmsWorkspace = $OmsWorkspaceData |Where-Object -Property Location -EQ $VirtualMachie.Location;
+			if ($OmsWorkspace)
+			{
+				$Workspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $OmsWorkspace.OMSRSG -Name $OmsWorkspace.OMSWorkpaceName;
+			}
+			
+			$ResourceGroupName = $VirtualMachine.ResourceGroupName;
+			$Template = $VirtualMachine.Template;
+			$Sas = $VirtualMachine.sasToken;
+
+			if ($VirtualMachine.operatingSystem.Contains('SQL'))
+			{
+				$VM = ConvertTo-Hashtable -PsObject $VirtualMachine -Exclusionlist 'lbOption','lbPort','lbProtocol','lbProbePath','dnsLabel','deployWebServer','ResourceGroupname','Template','sasToken';
+			}
+			else
+			{
+				$VM = ConvertTo-Hashtable -PsObject $VirtualMachine -Exclusionlist 'ResourceGroupname','Template','sasToken';
+			}
+			
+			$VM.Add('buildDate',$SubscriptionData.BuildDate);
+			$VM.Add('buildBy',$SubscriptionData.BuildBy);
+			$VM.Add('workspaceID',$Workspace.CustomerId);
+			$VM.Add('workspaceKey',$Workspace.PrimarySharedKey);
+			$VM.Item('DomainPassword') = $VirtualMachine.DomainPassword |ConvertTo-SecureString -AsPlainText -Force;
+			$VM.Add('adminPassword',$VM.Item('DomainPassword'));
+
+			Write-Host "Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green
+            $status = New-AzureRmResourceGroupDeployment -Name ($SubscriptionData.DeploymentName + "-$($VM.vmName)") -ResourceGroupName $ResourceGroupName `
+                                            -Mode Incremental `
+                                            -TemplateParameterObject $VM `
+                                            -TemplateFile ("$($Template)" + "$($Sas)") `
+                                            -Force
+            if($status.ProvisioningState -eq 'Succeeded')
+			{
+                Write-Host "Success: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green
+            }
+            else
+			{
+                    Write-Host "Warning: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName is not in a Succeeded state, please validate" -ForegroundColor Yellow
+                    break
+            }
+
+		}
+	}
+	catch
+	{
+		throw $_;
+	}
+}
+
 function ConvertTo-Hashtable
 {
 	param
