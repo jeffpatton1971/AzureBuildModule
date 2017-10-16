@@ -3,14 +3,14 @@
 
 #{
 
- #       param(
+        param(
 
 #            [Parameter(Mandatory=$true)]
 
-            [string]$BuildSheet = ''
+            [string]$BuildSheet = '',
             [string]$DomainPassword = ''
 
- #        )
+         )
 
 
         $OMSWorkspace = $null
@@ -21,6 +21,9 @@
         $SheetArray = @('Subscriptions','Environments','ResourceGroups','VirtualNetworks','OMSWorkspaces','RecoveryServicesVault','ActiveDirectory','VirtualGateway','VPNConnections','NSGs','VirtualMachines','WebApps','TrafficManager','StorageAccounts')
    
    try{
+       $ErrorActionPreference = 'Stop'
+       $Error.Clear()
+
         $objExcel = New-Object -ComObject Excel.Application
         $workbook = $objExcel.Workbooks.Open($BSFile)
          
@@ -444,6 +447,7 @@
                                     $rowVMassetLocation,$colVMassetLocation = 1,33
                                     $rowVMTemplate,$colVMTemplate = 1,34
                                     $rowVMsasToken,$colVMsasToken = 1,35
+                                   # $rowVMHub,$colVMHub = 1,36
 
                                     $VMHash = @(@{})
 
@@ -465,7 +469,7 @@
                                                                 dataDiskSize = [convert]::ToInt32($sheet.Cells.Item($rowVMdataDiskSize+$i,$colVMdataDiskSize).text); `
                                                                 diskCaching = $sheet.Cells.Item($rowVMdiskCaching+$i,$colVMdiskCaching).text; `
                                                                 vnetRG = $sheet.Cells.Item($rowVMVNETRG+$i,$colVMVNETRG).text; `
-                                                                vnetName = $sheet.Cells.Item($rowVMVNETName+$i,$colVMVNETName).text; ` 
+                                                                vnetName = $sheet.Cells.Item($rowVMVNETName+$i,$colVMVNETName).text; `
                                                                 subnetName = $sheet.Cells.Item($rowVMsubnetName+$i,$colVMsubnetName).text; `
                                                                 lbOption = $sheet.Cells.Item($rowVMLBOption+$i,$colVMLBOption).text; `
                                                                 lbPort = [convert]::ToInt32($sheet.Cells.Item($rowVMLBPort+$i,$colVMLBPort).text); `
@@ -486,6 +490,8 @@
                                                                 assetLocation = $sheet.Cells.Item($rowVMassetLocation+$i,$colVMassetLocation).text; `
                                                                 Template = $sheet.Cells.Item($rowVMTemplate+$i,$colVMTemplate).text; `
                                                                 sasToken = $sheet.Cells.Item($rowVMsasToken+$i,$colVMsasToken).text; `
+                                                               # HubLicense = $sheet.Cells.Item($rowVMHub+$i,$colVMHub).text; `
+                                                                
                                                         }
                                                     
                                         }
@@ -619,6 +625,7 @@
     
     }
     catch{
+        throw $_;
         Write-Host "Something is happening"
         break
     }
