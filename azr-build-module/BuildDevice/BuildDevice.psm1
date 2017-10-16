@@ -334,18 +334,17 @@ function New-VirtualMachine
 
 			Write-Host "Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green
             $status = New-AzureRmResourceGroupDeployment -Name ($SubscriptionData.DeploymentName + "-$($VM.vmName)") -ResourceGroupName $ResourceGroupName `
-                                            -Mode Incremental `
-                                            -TemplateParameterObject $VM `
-                                            -TemplateFile ("$($Template)" + "$($Sas)") `
-                                            -Force
+						-Mode Incremental `
+						-TemplateParameterObject $VM `
+						-TemplateFile ("$($Template)" + "$($Sas)") `
+						-Force;
             if($status.ProvisioningState -eq 'Succeeded')
 			{
-                Write-Host "Success: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green
+				Write-Host "Success: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green;
             }
             else
 			{
-                    Write-Host "Warning: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName is not in a Succeeded state, please validate" -ForegroundColor Yellow
-                    break
+                Write-Host "Warning: Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName is not in a Succeeded state, please validate" -ForegroundColor Yellow;
             }
 
 		}
