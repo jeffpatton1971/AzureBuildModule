@@ -66,7 +66,13 @@ try
 			}
 			'VirtualMachines'
 			{
-	
+				$VirtualMachineData = Get-BuildSheetData -Path $Path -Worksheet $Sheet;
+				foreach ($VirtualMachine in $VirtualMachineData)
+				{
+					$Template = Get-Template -Template ($VirtualMachine.Template+$VirtualMachine.sasToken);
+					$Parametmers = $Template.Parameters;
+
+				}
 			}
 			'Environments'
 			{

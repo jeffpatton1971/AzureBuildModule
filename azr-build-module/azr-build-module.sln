@@ -7,7 +7,7 @@ Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "azr-build-module", "azr-bui
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "BuildSheet", "BuildSheet\BuildSheet.pssproj", "{706A0D64-CA5D-42F3-BF77-8D02F4491B12}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{A188DFCD-6ED2-477F-BC1C-2E29A7184D06}"
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "BuildDevice", "BuildDevice\BuildDevice.pssproj", "{A215D5B0-F52D-453F-A2F8-1E98627139FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +23,10 @@ Global
 		{706A0D64-CA5D-42F3-BF77-8D02F4491B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{706A0D64-CA5D-42F3-BF77-8D02F4491B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{706A0D64-CA5D-42F3-BF77-8D02F4491B12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A215D5B0-F52D-453F-A2F8-1E98627139FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A215D5B0-F52D-453F-A2F8-1E98627139FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A215D5B0-F52D-453F-A2F8-1E98627139FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A215D5B0-F52D-453F-A2F8-1E98627139FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

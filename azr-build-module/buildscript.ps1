@@ -8,7 +8,8 @@
 #            [Parameter(Mandatory=$true)]
 
             [string]$BuildSheet = '',
-            [string]$DomainPassword = ''
+            [string]$DomainPassword = '',
+			[bool]$License = $false
 
          )
 
@@ -447,7 +448,11 @@
                                     $rowVMassetLocation,$colVMassetLocation = 1,33
                                     $rowVMTemplate,$colVMTemplate = 1,34
                                     $rowVMsasToken,$colVMsasToken = 1,35
-                                   # $rowVMHub,$colVMHub = 1,36
+									if ($License)
+									{
+										$rowVMHub,$colVMHub = 1,36
+									}
+                                   
 
                                     $VMHash = @(@{})
 
@@ -489,10 +494,12 @@
                                                                 RaxAutomationExclude = $sheet.Cells.Item($rowVMRaxAutomationExclude+$i,$colVMRaxAutomationExclude).text; `
                                                                 assetLocation = $sheet.Cells.Item($rowVMassetLocation+$i,$colVMassetLocation).text; `
                                                                 Template = $sheet.Cells.Item($rowVMTemplate+$i,$colVMTemplate).text; `
-                                                                sasToken = $sheet.Cells.Item($rowVMsasToken+$i,$colVMsasToken).text; `
-                                                               # HubLicense = $sheet.Cells.Item($rowVMHub+$i,$colVMHub).text; `
-                                                                
+                                                                sasToken = $sheet.Cells.Item($rowVMsasToken+$i,$colVMsasToken).text; 
                                                         }
+											if ($License)
+											{
+												$VMHash += @{HubLicense = $sheet.Cells.Item($rowVMHub+$i,$colVMHub).text;}
+											}
                                                     
                                         }
                                     }

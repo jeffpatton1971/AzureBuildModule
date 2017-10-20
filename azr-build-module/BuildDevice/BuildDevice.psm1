@@ -309,7 +309,8 @@ function New-VirtualMachine
 			$OmsWorkspace = $OmsWorkspaceData |Where-Object -Property Location -EQ $VirtualMachie.Location;
 			if ($OmsWorkspace)
 			{
-				$Workspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $OmsWorkspace.OMSRSG -Name $OmsWorkspace.OMSWorkpaceName;
+				$Workspace = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $OmsWorkspace.OMSRSG -Name $OmsWorkspace.OMSWorkspaceName
+				$WorkspaceKeys = Get-AzureRmOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $OmsWorkspace.OMSRSG -Name $OmsWorkspace.OMSWorkspaceName
 			}
 			
 			$ResourceGroupName = $VirtualMachine.ResourceGroupName;
@@ -325,11 +326,11 @@ function New-VirtualMachine
 				$VM = ConvertTo-Hashtable -PsObject $VirtualMachine -Exclusionlist 'ResourceGroupname','Template','sasToken';
 			}
 			
-			$VM.Add('buildDate',$SubscriptionData.BuildDate);
-			$VM.Add('buildBy',$SubscriptionData.BuildBy);
+			$VM.Add('buildDate',$SubscriptionData.'Build Date');
+			$VM.Add('buildBy',$SubscriptionData.'Build By');
 			$VM.Add('workspaceID',$Workspace.CustomerId);
-			$VM.Add('workspaceKey',$Workspace.PrimarySharedKey);
-			$VM.Item('DomainPassword') = $VirtualMachine.DomainPassword |ConvertTo-SecureString -AsPlainText -Force;
+			$VM.Add('workspaceKey',$WorkspaceKeys.PrimarySharedKey);
+			$VM.Item('domainAdminPassword') = $VirtualMachine.DomainPassword |ConvertTo-SecureString -AsPlainText -Force;
 			$VM.Add('adminPassword',$VM.Item('DomainPassword'));
 
 			Write-Host "Creating Virtual Machine: $($VM.vmName) in $ResourceGroupName" -ForegroundColor Green
