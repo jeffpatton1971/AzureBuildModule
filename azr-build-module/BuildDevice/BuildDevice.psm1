@@ -385,3 +385,32 @@ function ConvertTo-Hashtable
 		throw $_;
 	}
 }
+
+function ConvertTo-PsObject
+{
+	param
+	(
+		[hashtable]$Hashtable,
+		[string[]]$Exclusionlist
+	)
+	try
+	{
+		$ErrorActionPreference = 'Stop';
+		$Error.Clear();
+
+		$PsObject = New-Object -TypeName psobject;
+
+		foreach ($Key in $Hashtable.Keys)
+		{
+			if ($Key -notin $Exclusionlist)
+			{
+				Add-Member -InputObject $PsObject -MemberType NoteProperty -Name $Key -Value $Hashtable[$Key]
+			}
+		}
+		return $PsObject;
+	}
+	catch
+	{
+		throw $_;
+	}
+}
