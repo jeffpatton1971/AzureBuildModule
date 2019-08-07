@@ -43,27 +43,29 @@ Function Get-BuildSheetData
 		[Parameter(Mandatory=$True,Position=1)]
 		[string]$Path,
 		[Parameter(Mandatory=$True,Position=2)]
-		[string]$Worksheet
+    [string]$Worksheet,
+    [Parameter(Mandatory=$false,Position=3)]
+    [int]$Offset = 2,
+    [Parameter(Mandatory=$false,Position=4)]
+    [int]$RowHeader = 3
 	)
 	try
 	{
 		$ErrorActionPreference = 'Stop';
 		$Error.Clear();
 
-		if (!(($Worksheet.Substring($Worksheet.Length-1,1)) -eq '$'))
-		{
-			$SheetName = "$($Worksheet)`$"
-		}
 		$Provider = "Provider=Microsoft.ACE.OLEDB.12.0";
 		$DataSource = "Data Source = $($Path)";
 		$Properties = "Extended Properties=`"Excel 12.0 Xml;HDR=YES;IMEX=1`"";
-		$Query = "SELECT * FROM [$($SheetName)]";
 		$OleDbConnection = New-Object System.Data.OleDb.OleDbConnection("$Provider;$DataSource;$Properties");
-		$OleDbCommand = New-Object System.Data.OleDb.OleDbCommand($Query);
-		$OleDbCommand.Connection = $OleDbConnection;
 		$OleDbConnection.Open();
 
-		$Columns = $OleDbConnection.GetSchema('Columns') |Where-Object -Property Table_Name -Like $SheetName;
+    $Table = $OleDbConnection.GetSchema('Tables') |Where-Object -Property TABLE_NAME -Like "*$($Worksheet)*"
+		$Columns = $OleDbConnection.GetSchema('Columns') |Where-Object -Property Table_Name -Like $Table.TABLE_NAME;
+
+    $Query = "SELECT * FROM [$($Table.TABLE_NAME)]";
+		$OleDbCommand = New-Object System.Data.OleDb.OleDbCommand($Query);
+		$OleDbCommand.Connection = $OleDbConnection;
 		$OleDbDataReader = $OleDbCommand.ExecuteReader();
 
 		$Data = @();
@@ -80,7 +82,7 @@ Function Get-BuildSheetData
 		$OleDbConnection.close();
 		$OleDbConnection.Dispose();
 
-		Return $Data;
+		Return ($Data[2..52] |Select-Object -Property F2,F3,F4,F5,F6);
 	}
 	catch
 	{
