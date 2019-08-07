@@ -15,14 +15,12 @@ Function Get-BuildSheetData
 			This is a regular Excel Range notation (A1:B12)
 		.EXAMPLE
 
-			Get-BuildSheetData -Path 'D:\Documents\Build Sheet-170925-08536.xlsx' -Worksheet Environments
+      Get-BuildSheetData -Path D:\Documents\170926-07791.xlsx -Worksheet Environments -Range A1:C3
 
-			Environment       Location         SubscriptionName
-			-----------       --------         ----------------
-			Production        South Central US Solarwinds Azure - Aviator Support
-			Q/A               South Central US Solarwinds Azure - Aviator Support
-			Development       South Central US Solarwinds Azure - Aviator Support
-			Disaster Recovery East US          Solarwinds Azure - Aviator Support
+      Environment       Location SubscriptionName
+      -----------       -------- ----------------
+      Production        East US  Paradigm Software - Aviator
+      Disaster Recovery West US  Paradigm Software - Aviator
 
 			Description
 			===========

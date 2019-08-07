@@ -16,7 +16,7 @@ SYNOPSIS
 
 
 SYNTAX
-    Get-BuildSheetData [-Path] <String> [-Worksheet] <String> [<CommonParameters>]
+    Get-BuildSheetData [-Path] <String> [-Worksheet] <String> [-Range] <String> [<CommonParameters>]
 
 
 DESCRIPTION
@@ -40,6 +40,15 @@ PARAMETERS
 
         Required?                    true
         Position?                    3
+        Default value
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -Range <String>
+        This is a regular Excel Range notation (A1:B12)
+
+        Required?                    true
+        Position?                    4
         Default value
         Accept pipeline input?       false
         Accept wildcard characters?  false
