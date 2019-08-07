@@ -11,6 +11,8 @@ Function Get-BuildSheetData
 			The path and filename of the buildsheet to process
 		.PARAMETER Worksheet
 			This is a defined list of worksheets
+		.PARAMETER Range
+			This is a regular Excel Range notation (A1:B12)
 		.EXAMPLE
 
 			Get-BuildSheetData -Path 'D:\Documents\Build Sheet-170925-08536.xlsx' -Worksheet Environments
@@ -44,10 +46,8 @@ Function Get-BuildSheetData
 		[string]$Path,
 		[Parameter(Mandatory=$True,Position=2)]
     [string]$Worksheet,
-    [Parameter(Mandatory=$false,Position=3)]
-    [int]$Offset = 2,
-    [Parameter(Mandatory=$false,Position=4)]
-    [int]$RowHeader = 3
+    [Parameter(Mandatory=$True,Position=3)]
+    [string]$Range
 	)
 	try
 	{
@@ -58,31 +58,19 @@ Function Get-BuildSheetData
 		$DataSource = "Data Source = $($Path)";
 		$Properties = "Extended Properties=`"Excel 12.0 Xml;HDR=YES;IMEX=1`"";
 		$OleDbConnection = New-Object System.Data.OleDb.OleDbConnection("$Provider;$DataSource;$Properties");
-		$OleDbConnection.Open();
 
-    $Table = $OleDbConnection.GetSchema('Tables') |Where-Object -Property TABLE_NAME -Like "*$($Worksheet)*"
-		$Columns = $OleDbConnection.GetSchema('Columns') |Where-Object -Property Table_Name -Like $Table.TABLE_NAME;
+    $Query = "SELECT * FROM [$($Worksheet)$" + $Range + "]";
+    
+    $DataSet = New-Object System.Data.DataSet;
+    $oleDbDataAdapter = New-Object System.Data.OleDb.OleDbDataAdapter($Query,$OleDbConnection.ConnectionString);
+    $oleDbDataAdapter.Fill($DataSet) |Out-Null;
+    $DataTable = New-Object System.Data.DataTable;
+    $DataTable = $DataSet.Tables[0];
 
-    $Query = "SELECT * FROM [$($Table.TABLE_NAME)]";
-		$OleDbCommand = New-Object System.Data.OleDb.OleDbCommand($Query);
-		$OleDbCommand.Connection = $OleDbConnection;
-		$OleDbDataReader = $OleDbCommand.ExecuteReader();
-
-		$Data = @();
-	
-		while ($OleDbDataReader.Read())
-		{
-			$Item = New-Object -TypeName psobject;
-			$Columns |Select-Object -ExpandProperty Column_Name |ForEach-Object {Add-Member -InputObject $Item -Name $_ -Value $OleDbDataReader.Item($_) -MemberType NoteProperty};
-			$Data += $Item;
-		}
-
-		$OleDbDataReader.Close();
-		$OleDbCommand.Dispose();
 		$OleDbConnection.close();
 		$OleDbConnection.Dispose();
 
-		Return ($Data[2..52] |Select-Object -Property F2,F3,F4,F5,F6);
+		Return $DataTable;
 	}
 	catch
 	{
