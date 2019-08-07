@@ -65,13 +65,15 @@ Function Get-BuildSheetData
     $DataTable = New-Object System.Data.DataTable;
     $DataTable = $DataSet.Tables[0];
 
-		$OleDbConnection.close();
-		$OleDbConnection.Dispose();
-
 		Return $DataTable;
 	}
 	catch
 	{
 		throw $_;
-	}
+  }
+  finally 
+  {
+		$OleDbConnection.close();
+		$OleDbConnection.Dispose();
+  }
 }
